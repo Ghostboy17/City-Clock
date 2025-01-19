@@ -12,6 +12,12 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.graphics import Rectangle, Color
 from kivy.core.text import LabelBase
+from kivy.uix.button import Button
+
+import json
+
+# Define la ruta para el archivo de configuración
+CONFIG_FILE = "config.json"
 
 # Register a custom font for LED style
 LabelBase.register(name="Digital7", fn_regular="assets/fonts/digital-7.ttf")
@@ -126,6 +132,14 @@ CITY_BACKGROUNDS = {
 
 class WorldClockApp(App):
     def build(self):
+        # Cargar la configuración inicial desde el archivo
+        self.config = self.load_config()
+
+        # Configuración predeterminada
+        self.current_country = self.config.get("country", "Ecuador")
+        self.current_city = self.config.get("city", "Quito")
+        self.current_color = self.config.get("color", (1, 0, 0, 1))  # Rojo por defecto
+
         # Set the window size (for desktop testing)
         Window.size = (800, 600)
 
@@ -134,23 +148,21 @@ class WorldClockApp(App):
 
         # Background initialization
         self.background_index = 0
-        self.current_country = "Ecuador"  # Default country
-        self.current_city = "Quito"  # Default city
         self.update_background()
 
         # Label for the clock
         self.clock_label = Label(
-            text="", 
-            font_size=72, 
-            bold=True, 
-            color=(1, 0, 0, 1),  # Red color for LED-style
-            font_name="Digital7",  # Use the registered font
-            size_hint=(1, 0.8)
+            text="",
+            font_size=72,
+            bold=True,
+            color=self.current_color,  # Color desde la configuración
+            font_name="Digital7",  # Usa la fuente registrada
+            size_hint=(1, 0.7)
         )
 
         # Spinner for selecting a country
         self.country_spinner = Spinner(
-            text="Ecuador",
+            text=self.current_country,
             values=list(COUNTRY_CITIES_TIMEZONES.keys()),
             size_hint=(0.25, 0.1)
         )
@@ -158,16 +170,24 @@ class WorldClockApp(App):
 
         # Spinner for selecting a city
         self.city_spinner = Spinner(
-            text="Quito",
-            values=list(COUNTRY_CITIES_TIMEZONES["Ecuador"].keys()),
-            size_hint=(0.25, 0.1)
+            text=self.current_city,
+            values=list(COUNTRY_CITIES_TIMEZONES[self.current_country].keys()),
+            size_hint=(0.13, 0.1)
         )
         self.city_spinner.bind(text=self.on_city_selected)
+
+        # Botón para cambiar el color
+        self.color_button = Button(
+            text="Cambiar Color",
+            size_hint=(0.13, 0.1)
+        )
+        self.color_button.bind(on_press=self.change_clock_color)
 
         # Add widgets to layout
         self.layout.add_widget(self.clock_label)
         self.layout.add_widget(self.country_spinner)
         self.layout.add_widget(self.city_spinner)
+        self.layout.add_widget(self.color_button)
 
         # Schedule clock updates
         Clock.schedule_interval(self.update_clock, 1)
@@ -176,6 +196,25 @@ class WorldClockApp(App):
         Clock.schedule_interval(self.rotate_background, 20)
 
         return self.layout
+
+    def load_config(self):
+        """Cargar la configuración desde un archivo JSON."""
+        if os.path.exists(CONFIG_FILE):
+            with open(CONFIG_FILE, "r") as file:
+                return json.load(file)
+        return {}
+
+    def save_config(self):
+        """Guardar la configuración actual en un archivo JSON."""
+        with open(CONFIG_FILE, "w") as file:
+            json.dump(
+                {
+                    "country": self.current_country,
+                    "city": self.current_city,
+                    "color": self.current_color,
+                },
+                file,
+            )
 
     def update_clock(self, dt):
         """Update the clock label with the current time in the selected city."""
@@ -195,6 +234,7 @@ class WorldClockApp(App):
         """Handle city selection from the spinner."""
         self.current_city = text
         self.update_background()
+        self.save_config()  # Guardar la configuración actualizada
 
     def update_background(self):
         """Update the background image based on the selected city."""
@@ -226,10 +266,37 @@ class WorldClockApp(App):
                 size=Window.size
             )
 
+    def change_clock_color(self, instance):
+        """Cambiar el color de los números del reloj."""
+    # Lista de colores predefinidos
+        color_options = [
+            (1, 0, 0, 1),  # Rojo
+            (0, 1, 0, 1),  # Verde
+            (0, 0, 1, 1),  # Azul
+            (1, 0.5, 0, 1),  # Naranja
 
+            (1, 1, 0, 1),  # Amarillo
+            (1, 1, 1, 1),  # Blanco
+        ]
 
+        # Convertir el color actual en tupla para evitar problemas de comparación
+        current_color_tuple = tuple(self.current_color)
+
+        # Cambiar al siguiente color en la lista
+        if current_color_tuple in color_options:
+            current_index = color_options.index(current_color_tuple)
+            self.current_color = color_options[(current_index + 1) % len(color_options)]
+        else:
+            # Si el color actual no está en la lista, establecer el primero como predeterminado
+            self.current_color = color_options[0]
+
+        # Actualizar el color del texto del reloj
+        self.clock_label.color = self.current_color
+
+        # Guardar el nuevo color en la configuración
+        self.save_config()
+
+        
 
 if __name__ == "__main__":
     WorldClockApp().run()
-
-
