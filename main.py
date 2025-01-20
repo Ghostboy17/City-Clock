@@ -164,7 +164,7 @@ class WorldClockApp(App):
         self.country_spinner = Spinner(
             text=self.current_country,
             values=list(COUNTRY_CITIES_TIMEZONES.keys()),
-            size_hint=(0.25, 0.1)
+            size_hint=(0.13, 0.1)
         )
         self.country_spinner.bind(text=self.on_country_selected)
 
