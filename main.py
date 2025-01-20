@@ -111,8 +111,10 @@ CITY_BACKGROUNDS = {
    
     "Tokio": ["assets/backgrounds/tokyo1.jpg", "assets/backgrounds/tokyo2.jpg"],
 
-    "Tokio": ["assets/Asia/Japan/tokio1.jpg", "assets/Asia/Japan/tokio2.jpg", "assets/Asia/Japan/tokio3.jpg",],
-    
+    "Tokio": ["assets/Asia/Japan/Tokio/tokio1.jpg", "assets/Asia/Japan/Tokio/tokio2.jpg", "assets/Asia/Japan/Tokio/tokio3.jpg",],
+    "Osaka": ["assets/Asia/Japan/Osaka/osaka1.jpg", "assets/Asia/Japan/Osaka/osaka2.jpg", "assets/Asia/Japan/Osaka/osaka3.jpg",],
+    "Kioto": ["assets/Asia/Japan/Kioto/kioto1.jpg", "assets/Asia/Japan/Kioto/kioto2.jpg", "assets/Asia/Japan/Kioto/kioto3.jpg", "assets/Asia/Japan/Kioto/kioto4.jpg",],
+
     "Seoul": ["assets/Asia/Korea_S/Seoul/seoul1.jpg", "assets/Asia/Korea_S/Seoul/seoul2.jpg","assets/Asia/Korea_S/Seoul/seoul3.jpg",],
 
     "Pyongyang": ["assets/Asia/Korea_N/Pyongyang/pyongyang1.jpg", "assets/Asia/Korea_N/Pyongyang/pyongyang2.jpg", "assets/Asia/Korea_N/Pyongyang/pyongyang3.jpg",],
