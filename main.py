@@ -78,6 +78,9 @@ COUNTRY_CITIES_TIMEZONES = {
     "Brazil": {
         "Brasilia": "Brazil/East",
     },
+    "United Kingdom": {
+        "Londres": "Europe/London",
+    },
 }
 
 # Define a dictionary with backgrounds for each city
@@ -125,6 +128,7 @@ CITY_BACKGROUNDS = {
     "Hamburgo": ["assets/Europe/Alemania/Hamburgo/hamburgo1.jpg", "assets/Europe/Alemania/Hamburgo/hamburgo2.jpg", "assets/Europe/Alemania/Hamburgo/hamburgo3.jpg",],
     "Munich": ["assets/Europe/Alemania/Munich/munich1.jpg", "assets/Europe/Alemania/Munich/munich2.jpg", "assets/Europe/Alemania/Munich/munich3.jpg",],
 
+    "Londres": ["assets/Europe/Reino_Unido/Londres/londres1.jpg", "assets/Europe/Reino_Unido/Londres/londres2.jpg", "assets/Europe/Reino_Unido/Londres/londres3.jpg",],
 
 
 
