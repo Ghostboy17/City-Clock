@@ -1,0 +1,196 @@
+
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="static/assets/backgrounds/logo.ico" type="image/x-icon">
+    <title>City Clock</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            transition: background 0.5s ease-in-out;
+        }
+        .clock-container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+        }
+        .clock {
+            font-family: 'Courier New', monospace;
+            font-size: 80px;
+            color: red;
+            text-shadow: 0 0 10px red, 0 0 20px red;
+        }
+        .city {
+            font-size: 24px;
+            color: white;
+        }
+        .controls {
+            margin-top: 20px;
+        }
+        button, select {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <h2 id="selected-city">Cargando...</h2>
+        <div class="clock" id="clock"></div>
+        
+        <div class="controls">
+            <label for="country">:</label>
+            <select id="country" onchange="updateCities()">
+                <option value="EE.UU.">EE.UU.</option>
+                <option value="Reino Unido">Reino Unido</option>
+                <option value="Japón">Japón</option>
+                <option value="Francia">Francia</option>
+                <option value="Rusia">Rusia</option>
+                <option value="Ecuador">Ecuador</option>
+            </select>
+
+            <label for="city">:</label>
+            <select id="city" onchange="changeCity()"></select>
+
+            <button onclick="changeColor()">Cambiar Color</button>
+        </div>
+    </div>
+
+    <script>
+        const cityData = {
+            
+            "EE.UU.": {
+                "Nueva York": { timezone: "America/New_York", image: "static/assets/NT-America/U.S.A/New_York/new_york1.jpg" },
+                "Los Ángeles": { timezone:"America/Los_Angeles", image:"static/assets/NT-America/U.S.A/Los_Angeles/los_angeles3.jpg" },
+                "Chicago": { timezone:"America/Chicago", image:"static/assets/NT-America/U.S.A/Chicago/chicago1.jpg"},
+            },
+
+            "Reino Unido": {
+                "Londres": { timezone:"Europe/London",image:"static/assets/Europe/Reino_Unido/Londres/londres3.jpg"},
+                "Manchester": { timezone:"Europe/London",image:"static/assets/Europe/Reino_Unido/Manchester/manchester2.jpg"},
+            },
+
+            "Japón": {
+                "Tokio":{ timezone: "Asia/Tokyo",image:"static/assets/Asia/Japan/Tokio/tokio5.jpg"},
+                "Osaka": { timezone: "Asia/Tokyo",image:"static/assets/Asia/Japan/Osaka/osaka3.jpg"},
+            },
+
+            "Francia": {
+                "París": { timezone: "Europe/Paris", image:"static/assets/Europe/France/Paris/paris1.jpg"},
+                "Lyon": { timezone: "Europe/Paris", image:"static/assets/Europe/France/Lyon/lyon1.jpg"},
+            },
+
+            "Rusia": {
+                "Moscú": { timezone:"Europe/Moscow", image:"static/assets/Europe/Russia/Moscu/moscu1.jpg"},
+                "San Petersburgo": { timezone:"Europe/Moscow", image:"static/assets/Europe/Russia/San_Petersburgo/san_pet1.jpg"},
+            },
+
+            "Ecuador": {
+                "Quito": { timezone:"America/Guayaquil",image:"static/assets/ST-America/Ecuador/Quito/quito5.jpg" },
+                "Guayaquil": { timezone:"America/Guayaquil", image:"static/assets/ST-America/Ecuador/Guayaquil/guayaquil1.jpg" },
+            }
+        };
+
+        
+
+        let currentCity = "Nueva York";
+        let currentColor = "red";
+        const colors = ["red", "green", "blue", "yellow"];
+
+        function updateClock() {
+            const selectedCountry = document.getElementById("country").value;
+            fetch(`/time?country=${selectedCountry}&city=${currentCity}`)
+
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("clock").textContent = data.time;
+                })
+                .catch(error => console.error("Error obteniendo la hora:", error));
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        function updateCities() {
+            const countrySelect = document.getElementById("country");
+            const citySelect = document.getElementById("city");
+            const selectedCountry = countrySelect.value;
+
+            citySelect.innerHTML = "";
+            for (let city in cityData[selectedCountry]) {
+                let option = document.createElement("option");
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            }
+
+            citySelect.selectedIndex = 0;
+            changeCity();
+        }
+
+        function changeCity() {
+            const citySelect = document.getElementById("city");
+            const countrySelect = document.getElementById("country");
+            const selectedCountry = countrySelect.value;
+            const selectedCity = citySelect.value;
+        
+            currentCity = selectedCity;
+            document.getElementById("selected-city").textContent = currentCity;
+        
+            // ✅ Ahora seleccionamos correctamente la imagen
+            document.body.style.backgroundImage = `url('${cityData[selectedCountry][selectedCity].image}')`;
+        
+            updateClock();
+        }
+        
+
+        function changeColor() {
+            let index = colors.indexOf(currentColor);
+            index = (index + 1) % colors.length;
+            currentColor = colors[index];
+            document.getElementById("clock").style.color = currentColor;
+            document.getElementById("clock").style.textShadow = `0 0 10px ${currentColor}, 0 0 20px ${currentColor}`;
+        }
+
+        function detectUserTimezone() {
+            const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            console.log("Zona horaria detectada:", userTimezone);
+
+            for (let country in cityData) {
+                for (let city in cityData[country]) {
+                    if (cityData[country][city] === userTimezone) {
+                        console.log(`Coincidencia encontrada: ${city}, ${country}`);
+                        document.getElementById("country").value = country;
+                        updateCities();
+
+                        document.getElementById("city").value = city;
+                        changeCity();
+                        return;
+                    }
+                }
+            }
+            console.log("No se encontró una coincidencia exacta.");
+        }
+
+        window.onload = () => {
+            updateCities();
+            detectUserTimezone();
+        };
+    </script>
+</body>
+</html>
