@@ -5,8 +5,9 @@ from datetime import datetime
 import pytz 
 import sqlite3
 
+from flask_cors import CORS
 app = Flask(__name__)
-
+CORS(app)
 
 countries = {
     "EE.UU.": {
