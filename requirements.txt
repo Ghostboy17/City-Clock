@@ -1,5 +1,9 @@
 
 
+Flask
+Flask-Cors
+pytz
+sqlite3
 asgiref==3.8.1
 blinker==1.8.2
 certifi==2024.8.30

@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, jsonify
 from datetime import datetime
 import pytz 
 import sqlite3
+import os
 
 from flask_cors import CORS
 app = Flask(__name__)
@@ -99,6 +100,7 @@ def update_settings():
     return jsonify({"message": "Settings updated", "city": city, "color": color})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=True, host="0.0.0.0", port=port)
 
 
