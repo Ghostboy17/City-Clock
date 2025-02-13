@@ -98,7 +98,7 @@ def update_settings():
         conn.commit()
     return jsonify({"message": "Settings updated", "city": city, "color": color})
 
-if __name__ == '__main__':
-    app.run(debug=True)
+#if __name__ == '__main__':
+    #app.run(debug=True)
 
 

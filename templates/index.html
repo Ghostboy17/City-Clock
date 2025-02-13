@@ -115,7 +115,7 @@
 
         function updateClock() {
             const selectedCountry = document.getElementById("country").value;
-            fetch(`/time?country=${selectedCountry}&city=${currentCity}`)
+            fetch(`/api/time?country=${selectedCountry}&city=${currentCity}`)
 
                 .then(response => response.json())
                 .then(data => {
