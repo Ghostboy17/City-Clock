@@ -5,7 +5,6 @@ from datetime import datetime
 import pytz 
 import sqlite3
 import os
-
 from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
@@ -57,7 +56,8 @@ def get_time():
 
 
 def init_db():
-    with sqlite3.connect("settings.db") as conn:
+    db_path = os.path.join(os.getcwd(), "settings.db")
+    with sqlite3.connect(db_path) as conn:
         cursor = conn.cursor()
         cursor.execute('''CREATE TABLE IF NOT EXISTS settings (
                           id INTEGER PRIMARY KEY,
@@ -100,7 +100,6 @@ def update_settings():
     return jsonify({"message": "Settings updated", "city": city, "color": color})
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=True, host="0.0.0.0", port=port)
+    app.run(debug=True)
 
 
